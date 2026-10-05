@@ -1,0 +1,61 @@
+seed: 42
+paths:
+  training_csv: data/training/train_A.csv
+  metric_train_csv: outputs/metric_train.csv
+  candidates_csv: outputs/metric_candidates.csv
+  queries_csv: outputs/metric_queries.csv
+  ground_truth_csv: outputs/metric_ground_truth.csv
+  split_audit_json: outputs/split_audit.json
+  cache_dir: outputs/features
+  train_manifest: outputs/features/train.json
+  candidate_manifest: outputs/features/candidate.json
+  query_manifest: outputs/features/query.json
+  feature_errors_csv: outputs/feature_errors.csv
+  best_checkpoint: outputs/checkpoints/best.pt
+  last_checkpoint: outputs/checkpoints/last.pt
+  training_log_csv: outputs/triplet_training_log.csv
+  predictions_csv: outputs/triplet_predictions.csv
+  embeddings_npz: outputs/player_embeddings.npz
+  metrics_csv: outputs/triplet_metrics.csv
+  evaluation_csv: outputs/triplet_evaluation.csv
+  opening_predictions_csv: outputs/metric_opening_predictions.csv
+  opening_metrics_csv: outputs/metric_opening_metrics.csv
+  opening_evaluation_csv: outputs/metric_opening_evaluation.csv
+  opening_errors_csv: outputs/metric_opening_errors.csv
+  comparison_csv: outputs/baseline_comparison.csv
+split:
+  train_players: 100
+  eval_players: 50
+  train_games_per_player: 20
+  candidate_games: 40
+  query_games: 10
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 8
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 64
+  num_blocks: 8
+  embedding_dim: 128
+  pool_size: 3
+training:
+  device: auto
+  batch_size: 64
+  epochs: 20
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  samples_per_epoch: 4096
+  num_workers: 0
+  num_threads: 4
+  deterministic: true
+inference:
+  batch_size: 64
+  top_k: 5
+opening:
+  board_size: 19
+  opening_moves: 40

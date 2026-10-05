@@ -10,3 +10,7 @@
 原始資料、mock CSV 與輸出都不納入 Git。
 
 `python -m src.create_mock_data` 會產生 `data/mock/train_A.csv`（純合成資料）。
+
+Phase 2 仍只使用 `data/training/train_A.csv`，先將玩家分為互斥的 metric training 與 held-out evaluation。
+`python -m src.create_metric_mock_data` 另產生 `data/mock/metric_train_A.csv`（10 位合成玩家，60 盤），不覆蓋 Phase 1 mock。
+目前沒有正式 CSV；請從官方 Releases 下載、解壓後放到上述 training 路徑。
