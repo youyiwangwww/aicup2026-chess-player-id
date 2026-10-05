@@ -1,0 +1,20 @@
+seed: 42
+paths:
+  training_csv: data/mock/train_A.csv
+  statistics_csv: outputs/mock/dataset_statistics.csv
+  candidates_csv: outputs/mock/candidates.csv
+  queries_csv: outputs/mock/queries.csv
+  ground_truth_csv: outputs/mock/ground_truth.csv
+  predictions_csv: outputs/mock/predictions.csv
+  metrics_csv: outputs/mock/metrics.csv
+  evaluation_csv: outputs/mock/evaluation.csv
+  parsing_errors_csv: outputs/mock/parsing_errors.csv
+validation:
+  num_players: 6
+  candidate_games: 5
+  query_games: 3
+features:
+  board_size: 19
+  opening_moves: 40
+baseline:
+  top_k: 5

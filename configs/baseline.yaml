@@ -1,0 +1,20 @@
+seed: 42
+paths:
+  training_csv: data/training/train_A.csv
+  statistics_csv: outputs/dataset_statistics.csv
+  candidates_csv: outputs/candidates.csv
+  queries_csv: outputs/queries.csv
+  ground_truth_csv: outputs/ground_truth.csv
+  predictions_csv: outputs/predictions.csv
+  metrics_csv: outputs/metrics.csv
+  evaluation_csv: outputs/evaluation.csv
+  parsing_errors_csv: outputs/parsing_errors.csv
+validation:
+  num_players: 50
+  candidate_games: 40
+  query_games: 10
+features:
+  board_size: 19
+  opening_moves: 40
+baseline:
+  top_k: 5
