@@ -1,21 +1,46 @@
 # Go Player Identification：教授會議更新
 
-## Phase 2.8 最新摘要（DEV2，非 TEST）
+## Problem／Dataset
 
-DEV2：200 TRAIN players × 20 games、100 VAL players × candidate 30/query 10，身份、game_id 與 exact SGF 互斥。
+任務是由多盤 query 棋譜，辨識 100 位 candidate players 中的同一玩家。官方 train_A.csv：100,000 games／1,582 players。指標為 Top-1／3／5 與 competition score（正確名次 r≤5：exp(-(r-1))，未入 Top-5 為 0）。
 
-| 固定方法 | Top-1 | Top-3 | Top-5 | Score |
-|---|---:|---:|---:|---:|
-| Color-aware-player-5 | 0.69 | 0.84 | 0.88 | 0.739568 |
-| Triplet-Hard-100（epoch 18） | 0.38 | 0.50 | 0.57 | 0.417385 |
-| Fusion（alpha=0.9，z-score） | 0.71 | 0.85 | 0.91 | 0.758266 |
+TRAIN／VAL／TEST 分開玩家身份，避免識別已見玩家。Round 1 TEST、FINAL TEST 2 永久 CLOSED；本輪沒有重新讀其棋局、truth 或做 inference。
 
-- Color-aware Opening 改善 **0.103179**；Fusion 比 Opening 改善 **0.018698**。
-- Opening 錯的 31 題中，Triplet 單獨補對 **9 題**。
-- 固定 54 人的 Opening 同色−跨色 gap **0.754040**，跨色依然很弱。
-- **Embedding collapse 尚未解決**：Hard-100 separation 約 3.53e-9，全部 128 維觸發近零 variance 警示。
-- **CrossColor positive 未帶來穩定改善**：配對 99 位 TRAIN，Hard 0.409307、CrossColor 0.348375；B→W 退步，同色−跨色 gap 未縮小。
+## Baseline evolution／關鍵發現
 
-Phase 2.9：100 位全新 Stability 身份，Opening／Triplet／Fusion score 為 **0.839382／0.408832／0.867889**。固定 Fusion 改善 **+0.028506**，1,000 次 paired bootstrap 差值 95% CI **[−0.010277, 0.068760]**，仍未排除零改善；embedding collapse 持續存在。92 tests 全通過，未調整模型或 alpha。
+- Opening Fingerprint：用目標玩家實際落子建立 heatmap，平均多盤後 cosine retrieval。開局偏好已提供強訊號。
+- Phase 2.8 color-aware-player-5：黑／白分開 fingerprint，DEV2 score **0.739568**，比非 color-aware player-5 **+0.103179**。
+- Triplet-Hard-100：原 64-channel／8-block encoder，128 embedding；DEV2 best epoch 18、score **0.417385**。Opening 錯的 31 題中，Triplet 單獨補對 9 題。
+- Cross-color gap 很大；配對 CrossColor positive 沒有改善。Stability 同／異玩家 cosine 都接近 1，separation 4.63e-9，全部 128 維近零 variance：**embedding collapse 尚未解決**。
+- Frozen Fusion：每題 candidate scores 分別 z-score，alpha=0.9；DEV2 比 Opening **+0.018698**。模型、epoch、window、alpha 全部 frozen。
 
-限制與下一步：DEV2 已反覆選窗口、epoch、alpha，Stability 的正向結果仍有抽樣不確定性。依指定三條件為 **READY FOR FINAL TEST 3**，下一步可規劃獨立 one-shot 驗證；本輪沒有建立或執行。Round 1 TEST、FINAL TEST 2 永久 CLOSED；不加入新模型、Strength Estimator 或 MiniZero。
+## Stability／FINAL TEST 3
+
+Stability 使用 100 位新玩家，每人 candidate 30／query 10；score 差 **+0.028506**，paired bootstrap 95% CI **[−0.010277, 0.068760]**，未排除零改善。
+
+FINAL TEST 3 排除歷史全部 **615 位身份**，剩餘 154 位至少有 40 盤；抽取 100 位完全新玩家，同樣 30／10 games。所有 identity／game／SGF overlap=0。Preregistration SHA256 綁定資料／split／config／checkpoint，13 項 preflight 通過，只有一次 inference／evaluation。
+
+| method | dev2 | stability | final_test3 |
+| --- | --- | --- | --- |
+| opening | 0.739568 | 0.839382 | 0.773919 |
+| triplet | 0.417385 | 0.408832 | 0.388429 |
+| fusion | 0.758266 | 0.867889 | 0.790240 |
+
+FINAL TEST 3 四方法正式結果：
+
+| method | top1 | top3 | top5 | competition_score |
+| --- | --- | --- | --- | --- |
+| random | 0.030000 | 0.060000 | 0.080000 | 0.039392 |
+| opening_color_player5 | 0.720000 | 0.890000 | 0.910000 | 0.773919 |
+| triplet_hard100 | 0.300000 | 0.590000 | 0.650000 | 0.388429 |
+| fusion_alpha09 | 0.740000 | 0.900000 | 0.920000 | 0.790240 |
+
+Fusion−Opening **+0.016321**，paired bootstrap 95% CI **[-0.022885, 0.052726]**。差值 95% CI 跨 0，不能確認 Fusion 提升穩定，且不能依結果重選 alpha。 三批方法排名一致：True。Triplet 單獨補對 Opening 錯誤 4 題；Fusion 補對 4 題。
+
+## 限制與下一個研究問題
+
+各 partition 玩家難度可能不同；100 questions 的 CI 仍寬，DEV2 已反覆選模型／alpha，不能把 point estimate 改善當作最終定論。Triplet collapse 尚未解決，跨色效果仍弱。
+
+下一步只提出研究建議：在新的 DEV protocol 控制同色／跨色難度；先診斷 representation collapse 與 aggregation；事前固定 Fusion 假設，以更多獨立身份驗證其改善。
+
+**FINAL TEST 3 已永久 CLOSED，evaluation_count=1。103 tests／imports／syntax 全通過。**不使用 TEST3 調參，不重跑，不進 Phase 3；不加入 Strength Estimator、MiniZero 或新模型。

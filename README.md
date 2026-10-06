@@ -334,6 +334,17 @@ python scripts/report_phase29.py
 
 本輪已完成，第二個指令會拒絕再次 inference；報告可從保存結果重建。結果位於 `outputs/phase29/`，完整解讀見 [docs/phase29_results.md](docs/phase29_results.md)。READY 判定不會建立 FINAL TEST 3。
 
+## Phase 2.10：FINAL TEST 3 已永久 CLOSED
+
+100 位完全未使用玩家（每人 candidate 30／query 10），以 preregistered frozen 方法完成唯一一次正式評估。結果與 SHA256／bootstrap／互補性分析見 [docs/phase210_results.md](docs/phase210_results.md)；會議摘要見 [docs/professor_update.md](docs/professor_update.md)。
+
+```powershell
+python scripts/check_phase210.py
+python scripts/report_phase210.py
+```
+
+這兩個指令只做測試或重建保存結果的報告。`python -m src.phase210_final_test3`（含 `--prepare`）現在必須拒絕；split CSV／ground truth 不可再讀。失敗的 one-shot 也不可重跑。所有模型、epoch、opening window、alpha 與 normalization 保持 frozen，本輪不進 Phase 3。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)

@@ -7,6 +7,7 @@ import yaml
 
 # Install the input-open guard; it affects only consumed Phase 2.6 FINAL TEST 2 files.
 from . import final_test2_lock
+from . import final_test3_lock
 
 ROOT = Path(__file__).resolve().parents[1]
 

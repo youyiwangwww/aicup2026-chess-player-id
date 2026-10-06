@@ -1,0 +1,31 @@
+seed: 42
+output_dir: outputs/phase210
+selected_config: configs/phase28_selected.yaml
+protocol_manifest: outputs/phase28/protocol_verification.json
+paths:
+  training_csv: data/training/train_A.csv
+  val_candidates_csv: outputs/phase210/splits/candidates.csv
+  val_queries_csv: outputs/phase210/splits/queries.csv
+  val_ground_truth_csv: outputs/phase210/splits/ground_truth.csv
+  cache_dir: outputs/phase210/features
+  val_candidate_manifest: outputs/phase210/features/candidate.json
+  val_query_manifest: outputs/phase210/features/query.json
+split:
+  players: 100
+  candidate_games: 30
+  query_games: 10
+fixed:
+  opening_mode: player
+  opening_window: 5
+  color_aware: true
+  triplet_experiment: Triplet-Hard-100
+  best_epoch: 18
+  alpha: 0.9
+  normalization: z-score
+bootstrap:
+  resamples: 1000
+  seed: 42
+  confidence: 0.95
+inference:
+  device: cuda
+  batch_size: 64
