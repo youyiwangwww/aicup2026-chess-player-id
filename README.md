@@ -1,5 +1,33 @@
 # AI CUP 2026 Go Player Identification
 
+**目前建議使用 Phase 2.5 的 Train / Validation / Test 實驗流程。** Phase 2 的 held-out evaluation 是用來選 checkpoint 的 validation，不能當成最終 test。下方保留 Phase 1/2 操作說明作為歷史對照；新實驗方式詳見 [docs/phase25.md](docs/phase25.md)。
+
+已安裝依賴後，正式資料放在 `data/training/train_A.csv`：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_real_quick.ps1
+```
+
+目前機器無一般可用的 Python 別名，可以先用現有暫存 Python 跑獨立 mock：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_real_quick.ps1 -Mock -Python "C:\Users\abbywang\.codex\tmp\aicup-python\python.exe"
+```
+
+這個 mock 僅驗證流程，不是真實模型效果。正式資料缺少時會印出 `Please place the official train_A.csv at data/training/train_A.csv` 並停止，不下載資料、不產生 real result。
+
+Phase 2.5 新增 `configs/real_quick.yaml`、`configs/phase25_mock.yaml`、final-test evaluation、Random baseline、五組 feature coverage、實驗 metadata 和手動 multi-seed 工具。三個 baseline 使用完全相同的 TEST CSV；TRAIN/VAL/TEST 身份互斥，23 項 player/game/SGF overlap 都須為 0。42 項 tests 已通過（包含原有 26 項）；訓練時的 TEST 存取、final test 執行時序與一次評估規則都有測試。
+
+手動執行三個種子（需已安裝一般 Python/venv 並具備正式資料）：
+
+```powershell
+python scripts/run_multi_seed.py --seeds 42 123 2026
+```
+
+輸出隔離到 `outputs/seed_42/`、`seed_123/`、`seed_2026/`，彙整至 `outputs/results/multi_seed_summary.csv`；`seed=mean/std` 是彙總列，std 採 sample std（ddof=1）。Quick 預設僅 seed 42，不會自動觸發 multi-seed。
+
+新實驗輸出在 `outputs/splits/`、`outputs/results/`；mock 全部放在 `outputs/phase25_mock/`。正式資料目前不存在，因此沒有 real metrics 或 real multi-seed 結果。教授報告已更新為三層架構：[docs/professor_update.md](docs/professor_update.md)。
+
 本專案研究「根據多盤圍棋棋譜，找出下棋的玩家」。每題提供同一玩家的多盤 query，與已知 player_id 的 candidate 棋譜庫比較，輸出 Top-5 玩家。內容是 **Go 圍棋**，即使遠端 repository 名稱含 chess，也不代表西洋棋。
 
 | 方法 | 特徵與比較方式 | 是否訓練 |

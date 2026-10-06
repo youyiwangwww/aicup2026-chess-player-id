@@ -1,5 +1,7 @@
 # Phase 2：Go Player Identification Metric Learning
 
+這份文件記錄 Phase 2 的兩層設計；其中 held-out evaluation 用於選 checkpoint，屬於 validation。正式 final test 設計已在 [Phase 2.5](phase25.md) 改為三組互斥玩家，請以新流程進行實驗報告。
+
 ## 問題與 Baseline 0
 
 玩家辨識的輸入是一位玩家的多盤棋譜，輸出是在 candidate 資料庫中最可能的玩家。它不是預測棋力或下一步落子。

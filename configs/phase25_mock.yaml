@@ -1,0 +1,77 @@
+dataset_kind: mock
+output_dir: outputs/phase25_mock
+seed: 42
+paths:
+  training_csv: data/mock/phase25_train_A.csv
+  metric_train_csv: outputs/phase25_mock/splits/train.csv
+  val_candidates_csv: outputs/phase25_mock/splits/val_candidates.csv
+  val_queries_csv: outputs/phase25_mock/splits/val_queries.csv
+  val_ground_truth_csv: outputs/phase25_mock/splits/val_ground_truth.csv
+  test_candidates_csv: outputs/phase25_mock/splits/test_candidates.csv
+  test_queries_csv: outputs/phase25_mock/splits/test_queries.csv
+  test_ground_truth_csv: outputs/phase25_mock/splits/test_ground_truth.csv
+  split_audit_json: outputs/phase25_mock/splits/split_audit.json
+  cache_dir: outputs/phase25_mock/features
+  train_manifest: outputs/phase25_mock/features/train.json
+  val_candidate_manifest: outputs/phase25_mock/features/val_candidate.json
+  val_query_manifest: outputs/phase25_mock/features/val_query.json
+  test_candidate_manifest: outputs/phase25_mock/features/test_candidate.json
+  test_query_manifest: outputs/phase25_mock/features/test_query.json
+  feature_errors_csv: outputs/phase25_mock/results/feature_errors.csv
+  feature_coverage_csv: outputs/phase25_mock/results/feature_coverage.csv
+  best_checkpoint: outputs/phase25_mock/checkpoints/best.pt
+  last_checkpoint: outputs/phase25_mock/checkpoints/last.pt
+  training_state_json: outputs/phase25_mock/checkpoints/training_state.json
+  training_log_csv: outputs/phase25_mock/results/training_log.csv
+  final_test_receipt_json: outputs/phase25_mock/results/final_test_receipt.json
+  test_predictions_csv: outputs/phase25_mock/results/test_predictions.csv
+  test_metrics_csv: outputs/phase25_mock/results/test_metrics.csv
+  test_evaluation_csv: outputs/phase25_mock/results/test_evaluation.csv
+  random_test_predictions_csv: outputs/phase25_mock/results/random_test_predictions.csv
+  random_test_metrics_csv: outputs/phase25_mock/results/random_test_metrics.csv
+  random_test_evaluation_csv: outputs/phase25_mock/results/random_test_evaluation.csv
+  opening_test_predictions_csv: outputs/phase25_mock/results/opening_test_predictions.csv
+  opening_test_metrics_csv: outputs/phase25_mock/results/opening_test_metrics.csv
+  opening_test_evaluation_csv: outputs/phase25_mock/results/opening_test_evaluation.csv
+  opening_test_errors_csv: outputs/phase25_mock/results/opening_test_errors.csv
+  comparison_csv: outputs/phase25_mock/results/baseline_comparison.csv
+  experiment_summary_json: outputs/phase25_mock/results/experiment_summary.json
+split:
+  train_players: 4
+  val_players: 4
+  test_players: 6
+  train_games_per_player: 4
+  val_candidate_games: 3
+  val_query_games: 2
+  test_candidate_games: 3
+  test_query_games: 2
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 4
+cache:
+  games_per_shard: 8
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 16
+  num_blocks: 2
+  embedding_dim: 32
+  pool_size: 3
+training:
+  device: cpu
+  epochs: 3
+  batch_size: 8
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  samples_per_epoch: 32
+  num_workers: 0
+  num_threads: 2
+  deterministic: true
+inference:
+  batch_size: 32
+  top_k: 5
+opening:
+  board_size: 19
+  opening_moves: 40

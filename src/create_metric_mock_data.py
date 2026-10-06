@@ -1,4 +1,6 @@
 """Create a separate synthetic Go dataset with unseen evaluation players."""
+import argparse
+
 import numpy as np
 import pandas as pd
 
@@ -36,8 +38,14 @@ def metric_mock_frame(num_players=10, games_per_player=6, seed=42):
 
 def main():
     """Write Phase 2 mock data without touching the original Phase 1 fixture."""
-    frame = metric_mock_frame()
-    path = ROOT / 'data/mock/metric_train_A.csv'
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--players', type=int, default=10)
+    parser.add_argument('--games-per-player', type=int, default=6)
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--output', default=str(ROOT / 'data/mock/metric_train_A.csv'))
+    args = parser.parse_args()
+    frame = metric_mock_frame(args.players, args.games_per_player, args.seed)
+    path = args.output
     write_csv(frame, path)
     print(f'Created {len(frame)} synthetic Go games at {path}', flush=True)
 

@@ -14,3 +14,6 @@
 Phase 2 仍只使用 `data/training/train_A.csv`，先將玩家分為互斥的 metric training 與 held-out evaluation。
 `python -m src.create_metric_mock_data` 另產生 `data/mock/metric_train_A.csv`（10 位合成玩家，60 盤），不覆蓋 Phase 1 mock。
 目前沒有正式 CSV；請從官方 Releases 下載、解壓後放到上述 training 路徑。
+
+Phase 2.5 一鍵 mock 使用 `data/mock/phase25_train_A.csv`（14 位玩家、84 盤）；與 Phase 1/2 mock 分開。
+正式 `real_quick.yaml` 仍只讀 `data/training/train_A.csv`。正式 quick 不會自動下載或以 mock 替代資料。

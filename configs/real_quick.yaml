@@ -1,0 +1,77 @@
+dataset_kind: real
+output_dir: outputs
+seed: 42
+paths:
+  training_csv: data/training/train_A.csv
+  metric_train_csv: outputs/splits/train.csv
+  val_candidates_csv: outputs/splits/val_candidates.csv
+  val_queries_csv: outputs/splits/val_queries.csv
+  val_ground_truth_csv: outputs/splits/val_ground_truth.csv
+  test_candidates_csv: outputs/splits/test_candidates.csv
+  test_queries_csv: outputs/splits/test_queries.csv
+  test_ground_truth_csv: outputs/splits/test_ground_truth.csv
+  split_audit_json: outputs/splits/split_audit.json
+  cache_dir: outputs/features25
+  train_manifest: outputs/features25/train.json
+  val_candidate_manifest: outputs/features25/val_candidate.json
+  val_query_manifest: outputs/features25/val_query.json
+  test_candidate_manifest: outputs/features25/test_candidate.json
+  test_query_manifest: outputs/features25/test_query.json
+  feature_errors_csv: outputs/results/feature_errors.csv
+  feature_coverage_csv: outputs/results/feature_coverage.csv
+  best_checkpoint: outputs/checkpoints/best.pt
+  last_checkpoint: outputs/checkpoints/last.pt
+  training_state_json: outputs/checkpoints/training_state.json
+  training_log_csv: outputs/results/training_log.csv
+  final_test_receipt_json: outputs/results/final_test_receipt.json
+  test_predictions_csv: outputs/results/test_predictions.csv
+  test_metrics_csv: outputs/results/test_metrics.csv
+  test_evaluation_csv: outputs/results/test_evaluation.csv
+  random_test_predictions_csv: outputs/results/random_test_predictions.csv
+  random_test_metrics_csv: outputs/results/random_test_metrics.csv
+  random_test_evaluation_csv: outputs/results/random_test_evaluation.csv
+  opening_test_predictions_csv: outputs/results/opening_test_predictions.csv
+  opening_test_metrics_csv: outputs/results/opening_test_metrics.csv
+  opening_test_evaluation_csv: outputs/results/opening_test_evaluation.csv
+  opening_test_errors_csv: outputs/results/opening_test_errors.csv
+  comparison_csv: outputs/results/baseline_comparison.csv
+  experiment_summary_json: outputs/results/experiment_summary.json
+split:
+  train_players: 30
+  val_players: 10
+  test_players: 10
+  train_games_per_player: 10
+  val_candidate_games: 10
+  val_query_games: 5
+  test_candidate_games: 10
+  test_query_games: 5
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 4
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 32
+  num_blocks: 4
+  embedding_dim: 64
+  pool_size: 3
+training:
+  device: auto
+  epochs: 3
+  batch_size: 16
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  samples_per_epoch: 512
+  num_workers: 0
+  num_threads: 4
+  deterministic: true
+inference:
+  batch_size: 64
+  top_k: 5
+opening:
+  board_size: 19
+  opening_moves: 40

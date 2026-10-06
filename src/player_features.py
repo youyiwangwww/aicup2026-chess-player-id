@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from sgfmill import boards, sgf
 
-from .build_metric_split import read_metric_partitions
+from .build_metric_split import is_three_way, read_metric_partitions, read_three_way_partitions
 from .metric_utils import file_digest, metric_parser, write_json
 from .utils import load_config, resolve_path, write_csv
 
@@ -132,14 +132,20 @@ def preprocess_partition(frame, group_column, csv_path, manifest_path, config):
     return manifest, errors
 
 
-def main():
-    """Audit inputs, preprocess all three partitions, and record per-game errors."""
-    args = metric_parser(__doc__).parse_args()
-    config = load_config(args.config)
-    training, candidates, queries, _ = read_metric_partitions(config)
-    jobs = [(training, 'player_id', 'metric_train_csv', 'train_manifest'),
-            (candidates, 'player_id', 'candidates_csv', 'candidate_manifest'),
-            (queries, 'question_id', 'queries_csv', 'query_manifest')]
+def preprocess_all(config):
+    """Preprocess bounded partitions before training; TEST preprocessing is isolated."""
+    if is_three_way(config):
+        parts = read_three_way_partitions(config)
+        jobs = [(parts[0], 'player_id', 'metric_train_csv', 'train_manifest'),
+                (parts[1], 'player_id', 'val_candidates_csv', 'val_candidate_manifest'),
+                (parts[2], 'question_id', 'val_queries_csv', 'val_query_manifest'),
+                (parts[4], 'player_id', 'test_candidates_csv', 'test_candidate_manifest'),
+                (parts[5], 'question_id', 'test_queries_csv', 'test_query_manifest')]
+    else:
+        training, candidates, queries, _ = read_metric_partitions(config)
+        jobs = [(training, 'player_id', 'metric_train_csv', 'train_manifest'),
+                (candidates, 'player_id', 'candidates_csv', 'candidate_manifest'),
+                (queries, 'question_id', 'queries_csv', 'query_manifest')]
     errors = []
     for frame, column, source_key, manifest_key in jobs:
         _, skipped = preprocess_partition(frame, column, config['paths'][source_key],
@@ -147,6 +153,12 @@ def main():
         errors.extend(skipped)
     write_csv(pd.DataFrame(errors, columns=['partition', 'group_id', 'game_id', 'error']),
               config['paths']['feature_errors_csv'])
+
+
+def main():
+    """Audit all inputs and write compressed features plus per-game errors."""
+    args = metric_parser(__doc__).parse_args()
+    preprocess_all(load_config(args.config))
 
 
 if __name__ == '__main__':

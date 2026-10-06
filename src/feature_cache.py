@@ -42,12 +42,16 @@ class GameFeatureStore:
         return features[offsets[slot]:offsets[slot + 1]]
 
 
-def load_store(config, partition):
+def load_store(config, partition, allow_empty=False):
     """Reject cached features from an older CSV, feature scheme or sampling seed."""
     source_key, manifest_key, column = {
         'train': ('metric_train_csv', 'train_manifest', 'player_id'),
         'candidate': ('candidates_csv', 'candidate_manifest', 'player_id'),
         'query': ('queries_csv', 'query_manifest', 'question_id'),
+        'val_candidate': ('val_candidates_csv', 'val_candidate_manifest', 'player_id'),
+        'val_query': ('val_queries_csv', 'val_query_manifest', 'question_id'),
+        'test_candidate': ('test_candidates_csv', 'test_candidate_manifest', 'player_id'),
+        'test_query': ('test_queries_csv', 'test_query_manifest', 'question_id'),
     }[partition]
     store = GameFeatureStore(config['paths'][manifest_key], config['cache']['max_cached_shards'])
     manifest = store.manifest
@@ -57,6 +61,6 @@ def load_store(config, partition):
             or manifest['feature_version'] != FEATURE_VERSION
             or manifest['group_column'] != column):
         raise ValueError(f'Stale {partition} cache; rerun python -m src.player_features with this config')
-    if not len(store):
+    if not len(store) and not allow_empty:
         raise ValueError(f'No valid {partition} games; inspect feature_errors_csv')
     return store
