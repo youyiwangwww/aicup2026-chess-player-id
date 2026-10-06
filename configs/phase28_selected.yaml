@@ -1,0 +1,95 @@
+seed: 42
+output_dir: outputs/phase28
+paths:
+  training_csv: data/training/train_A.csv
+  metric_train_csv: outputs/phase28/splits/train.csv
+  val_candidates_csv: outputs/phase28/splits/val_candidates.csv
+  val_queries_csv: outputs/phase28/splits/val_queries.csv
+  val_ground_truth_csv: outputs/phase28/splits/val_ground_truth.csv
+  cache_dir: outputs/phase28/features
+  train_manifest: outputs/phase28/features/train.json
+  val_candidate_manifest: outputs/phase28/features/candidate.json
+  val_query_manifest: outputs/phase28/features/query.json
+split:
+  train_players: 200
+  val_players: 100
+  train_games: 20
+  candidate_games: 30
+  query_games: 10
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 16
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 64
+  num_blocks: 8
+  embedding_dim: 128
+  pool_size: 3
+training:
+  device: cuda
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  triplets_per_player_per_epoch: 20
+  num_threads: 4
+  deterministic: true
+  exposure_players:
+  - 30
+  - 100
+  - 200
+  cross_color_min_games: 2
+inference:
+  batch_size: 64
+  top_k: 5
+fusion:
+  normalization: z-score
+  alphas:
+  - 0.0
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.9
+  - 1.0
+diagnostics:
+  variance_threshold: 1.0e-08
+  collapse_fraction: 0.8
+selection:
+  frozen: true
+  criterion: DEV2 validation competition score only
+  kind: fusion
+  method: Opening+Triplet
+  alpha: 0.9
+  top1: 0.71
+  top3: 0.85
+  top5: 0.91
+  competition_score: 0.7582658912334207
+  opening:
+    method: Color-aware-player-5
+    mode: player
+    window: 5
+    color_aware: true
+  triplet:
+    experiment: Triplet-Hard-100
+    best_epoch: 18
+    checkpoint: outputs/phase28/experiments/Triplet-Hard-100/best.pt
+    checkpoint_sha256: 9048144a9bc7d422c8c321d607f73fd1dc378054988741e975b56fbb7dab2d4f
+  fusion_normalization: z-score
+  source_sha256: 0915826dfeadb32fa6fc5f5a08b1ef90a5ed0e3cc7868452e8158c887e3ccbca
+  split_sha256:
+    train.csv: 305fdb4e92408380a09415cbf85da6f9dc80d1f43d95d1a3b7d4473f6731d768
+    val_candidates.csv: 065382d32740ff930466d7f3511a194f55ebcfa4791e7439a9eee0b08482b898
+    val_queries.csv: a99c7f106b8c0307dbfc4487aa1c324dbffc8be92c9feed9247f5b3231363ba4
+    val_ground_truth.csv: b395658e3e0c918429ece028f1626ca1798e9f5fc82b6b049acb936585b30467
+    val_pool.csv: 440576d0df013620f8998ea07783781cc376855d95bf89b04c57c681871b5668
+  no_final_test_created_or_evaluated: true

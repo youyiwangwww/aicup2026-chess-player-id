@@ -1,0 +1,52 @@
+seed: 42
+output_dir: outputs/phase28
+paths:
+  training_csv: data/training/train_A.csv
+  metric_train_csv: outputs/phase28/splits/train.csv
+  val_candidates_csv: outputs/phase28/splits/val_candidates.csv
+  val_queries_csv: outputs/phase28/splits/val_queries.csv
+  val_ground_truth_csv: outputs/phase28/splits/val_ground_truth.csv
+  cache_dir: outputs/phase28/features
+  train_manifest: outputs/phase28/features/train.json
+  val_candidate_manifest: outputs/phase28/features/candidate.json
+  val_query_manifest: outputs/phase28/features/query.json
+split:
+  train_players: 200
+  val_players: 100
+  train_games: 20
+  candidate_games: 30
+  query_games: 10
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 16
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 64
+  num_blocks: 8
+  embedding_dim: 128
+  pool_size: 3
+training:
+  device: cuda
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  triplets_per_player_per_epoch: 20
+  num_threads: 4
+  deterministic: true
+  exposure_players: [30, 100, 200]
+  cross_color_min_games: 2
+inference:
+  batch_size: 64
+  top_k: 5
+fusion:
+  normalization: z-score
+  alphas: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+diagnostics:
+  variance_threshold: 0.00000001
+  collapse_fraction: 0.8

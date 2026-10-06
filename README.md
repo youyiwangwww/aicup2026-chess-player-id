@@ -1,6 +1,17 @@
 # AI CUP 2026 Go Player Identification
 
-**目前建議使用 Phase 2.5 的 Train / Validation / Test 實驗流程。** Phase 2 的 held-out evaluation 是用來選 checkpoint 的 validation，不能當成最終 test。下方保留 Phase 1/2 操作說明作為歷史對照；新實驗方式詳見 [docs/phase25.md](docs/phase25.md)。
+目前進行 **Phase 2.8：Opening-aware / Color-aware DEV2**，設定為 `configs/phase28.yaml`，結果與選定設定見 [docs/phase28_results.md](docs/phase28_results.md) 與 `configs/phase28_selected.yaml`。Round 1 TEST、FINAL TEST 2 已永久 CLOSED；下方舊流程只作歷史參考，請勿重新執行正式 TEST。本輪沒有建立 FINAL TEST 3。
+
+```powershell
+python scripts/check_phase28.py
+python scripts/check_phase28_cuda.py
+python -m src.run_phase28 --config configs/phase28.yaml
+python scripts/report_phase28.py
+```
+
+使用既有 `requirements-triplet.txt`，並依機器安裝相容的 CUDA PyTorch；CPU 也可執行，但須在新的實驗開始前明確設定 device。DEV2 200 TRAIN/100 VAL 身份互斥，排除先前 TEST/VAL 的 110 位玩家，輸出全部隔離於 `outputs/phase28/`。實驗重跑會驗證來源、split、config 與 checkpoint provenance，重用已完成的相同 DEV 實驗，不重新挑選 TEST。
+
+**歷史 Phase 2.5 採 Train / Validation / Test 架構。** Phase 2 的 held-out evaluation 是用來選 checkpoint 的 validation，不能當成最終 test。下方保留 Phase 1/2/2.5 操作說明作為歷史對照，詳見 [docs/phase25.md](docs/phase25.md)。
 
 已安裝依賴後，正式資料放在 `data/training/train_A.csv`：
 
