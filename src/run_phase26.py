@@ -17,6 +17,7 @@ from .phase26_common import dev_frames, dev_only, variant_config
 from .phase26_cross_color import analyze_cross_color
 from .phase26_prepare import prepare, preserve_round1
 from .phase26_selection import freeze_selection
+from .final_test2_lock import require_unconsumed
 from .phase26_train import train_dev
 from .player_features import preprocess_partition
 from .utils import ROOT, load_config, resolve_path, write_csv
@@ -122,6 +123,7 @@ def result_row(config, best):
 
 def run(base):
     """Run A/B/C/hard sequentially with choices based exclusively on fixed DEV VAL."""
+    require_unconsumed()
     started = time.perf_counter()
     prepare(base)
     configurations, results, features = {}, [], {}

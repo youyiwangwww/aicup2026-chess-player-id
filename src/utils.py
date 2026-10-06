@@ -5,6 +5,9 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+# Install the input-open guard; it affects only consumed Phase 2.6 FINAL TEST 2 files.
+from . import final_test2_lock
+
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -305,6 +305,12 @@ python -m src.run_phase26 --config configs/phase26.yaml
 
 結果寫入 `outputs/phase26/`，所有實驗設定分開保存。完整方法、控制變因與輸出說明見 [docs/phase26.md](docs/phase26.md)。完成後選定 `configs/phase26_selected.yaml`，停止並等待使用者明確授權一次 FINAL TEST 2；本輪不輸出其分數。
 
+## Phase 2.7：FINAL TEST 2 已 CLOSED
+
+已獲授權並完成一次性評估，最新結果見 [docs/phase26_results.md](docs/phase26_results.md) 與 [docs/professor_update.md](docs/professor_update.md)。
+
+Receipt 位於 `outputs/phase26/final_test2/final_test2_receipt.json`，evaluation_count = 1。`python -m src.phase27_final_test2` 再次執行將拒絕；既有 preprocessing 入口也不能重開此 split。Phase 2.6 runner 已停止接受重跑，frozen config／checkpoint 保持原值。文件與比較表只能由保存的結果產生，不會再次 inference。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)

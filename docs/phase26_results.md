@@ -1,6 +1,6 @@
 # Phase 2.6：Triplet Baseline Diagnosis（DEV ONLY）
 
-Round 1 TEST 為 CLOSED TEST；FINAL TEST 2 為 LOCKED，評估次數 0。所有選擇只依 DEV VALIDATION。
+Phase 2.6 完成時：Phase 2.6 完成時：Round 1 TEST 為 CLOSED TEST；FINAL TEST 2 為 LOCKED，評估次數 0。所有選擇只依 DEV VALIDATION。Phase 2.7 最終結果與 CLOSED 狀態見文末。Phase 2.7 最終結果與 CLOSED 狀態見文末。
 
 初次 split 建立時曾重開 FINAL TEST 2 truth 檔案計算 SHA-256；未解析身份或評分。已改為在記憶體計算 hash，所有 tuning 步驟均未開啟該 truth 檔。
 
@@ -160,6 +160,47 @@ Embedding cosine 高度集中且同／不同玩家分布重疊，尚未學出清
 
 3. 在相同 34 位玩家建立 B→B、W→W、混色及跨色控制組，隔離顏色與候選人組成的效果。
 
-FINAL TEST 2 是否執行一次，等待使用者明確確認；本輪不會自動執行。
+Phase 2.6 結束時等待使用者確認；其後已獲授權執行 Phase 2.7 一次性評估，結果見文末。
 
 Runtime warnings and the separate CUDA limitation: [phase26_runtime.md](phase26_runtime.md). All reported experiments use CPU.
+
+## FINAL TEST 2 One-Shot Result
+
+FINAL TEST 2 已永久 CLOSED TEST，evaluation_count = 1。Frozen config、checkpoint、hyperparameters、seed 與 split 全部保持原值；本輪沒有 training、backprop、optimizer step 或再次選模。
+
+Selected H20-Hard，best epoch 17；checkpoint SHA256 `2807c60a056e2325c70e2b35065ca35fdd836eecdcbad9e25fdf9418bbabd4e5`。Config SHA256 `7508ff83002fd6ae87f4a6384e58245a49eef12df2ef3a25b80e44a40f9c4ec1`。
+
+### Feature coverage
+
+- candidate: total 2000, successful 2000, failed 0, success rate 100.00%
+- query: total 500, successful 500, failed 0, success rate 100.00%
+
+### Final TEST metrics
+
+| Method | Top-1 | Top-3 | Top-5 | Score |
+|---|---:|---:|---:|---:|
+| random | 0.0000 | 0.0800 | 0.1000 | 0.016473 |
+| opening10 | 0.7400 | 0.8800 | 0.9200 | 0.783563 |
+| triplet_hard | 0.3800 | 0.6400 | 0.8000 | 0.459101 |
+
+### DEV reference
+
+| Method | Top-1 | Top-3 | Top-5 | Score |
+|---|---:|---:|---:|---:|
+| random | 0.0200 | 0.0400 | 0.0400 | 0.027358 |
+| opening10 | 0.6200 | 0.7400 | 0.8400 | 0.663844 |
+| triplet_hard | 0.3200 | 0.5200 | 0.5800 | 0.376701 |
+
+Triplet TEST − DEV = +0.082401。Opening − Triplet gap：DEV 0.287143；TEST 0.324462。Ranking consistent = True。
+
+Triplet 比 Random 高 0.442628。最佳 TEST 方法為 opening10。Opening − Triplet 差距相較 DEV 擴大 0.037319。
+
+DEV candidate 每人 20 盤，TEST 每人 40 盤，且玩家不同；score 差異同時包含未見玩家與候選 fingerprint 品質的影響。本報告未做顯著性檢定；單 seed、50 questions 仍不足以估計跨 split 的穩定性。
+
+Phase 2.6 原 Triplet 的改進以同一 DEV reference 衡量；未在 FINAL TEST 2 重跑未選定的 Random-Negative checkpoint，因此不能把 TEST 差異直接歸因於 hard negative。
+
+只解讀本次固定設定結果，不用 CLOSED TEST 做後續調參。暫不進 Phase 3：embedding 可分性與跨顏色 robustness 仍需在新的 DEV 設計中驗證。
+
+CPU tests: 60 passed, failures 0, errors 0; syntax True。One-shot elapsed 375.14 seconds。
+
+一次性入口：`python -m src.phase27_final_test2`。再次呼叫（包括 check-only）將拒絕；共用 CSV readers 也拒絕重開已消耗的 FINAL TEST 2 split。Frozen YAML 中的 LOCKED 描述是評估前快照；最新狀態以 final_test2_receipt.json 為準。
