@@ -345,6 +345,18 @@ python scripts/report_phase210.py
 
 這兩個指令只做測試或重建保存結果的報告。`python -m src.phase210_final_test3`（含 `--prepare`）現在必須拒絕；split CSV／ground truth 不可再讀。失敗的 one-shot 也不可重跑。所有模型、epoch、opening window、alpha 與 normalization 保持 frozen，本輪不進 Phase 3。
 
+## Phase 2.11：Embedding Collapse Forensics（DEV-only）
+
+固定 Triplet-Hard-100 epoch 18，以 diagnostic hooks 擷取 backbone／raw／normalized representation，production forward 與 checkpoint 不變。中心、PCA、whitening 只由 DEV2 TRAIN fitting；所有比較只用 DEV2 VAL。CLOSED TEST inputs／score matrices、Stability ground truth 都被拒絕。
+
+```powershell
+python scripts/check_phase211.py
+python scripts/report_phase211.py
+python scripts/verify_phase211.py
+```
+
+診斷已完成；`python -m src.phase211_forensics --config configs/phase211.yaml` 會拒絕重做完整推論。資料與表格存於 `outputs/phase211/`，詳見 [docs/phase211_results.md](docs/phase211_results.md)。本輪沒有訓練新模型、修改 frozen selection，或建立 `phase211_selected.yaml`。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)

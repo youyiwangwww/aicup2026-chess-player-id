@@ -1,0 +1,23 @@
+output_dir: outputs/phase211
+selected_config: configs/phase28_selected.yaml
+checkpoint: outputs/phase28/experiments/Triplet-Hard-100/best.pt
+checkpoint_sha256: 9048144a9bc7d422c8c321d607f73fd1dc378054988741e975b56fbb7dab2d4f
+epoch: 18
+seed: 42
+device: cuda
+batch_size: 64
+num_threads: 4
+diagnostics:
+  near_zero_variance: 1.0e-8
+  collapse_fraction: 0.8
+  position_pairs_per_class: 20000
+  anisotropy_top1: 0.5
+  anisotropy_top5: 0.8
+  whitening_eigenvalue_floor: 1.0e-5
+  remove_pcs: [0, 1, 2, 4, 8]
+fusion:
+  opening_mode: player
+  opening_window: 5
+  color_aware: true
+  normalization: z-score
+  alpha: 0.9

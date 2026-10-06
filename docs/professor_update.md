@@ -1,46 +1,31 @@
 # Go Player Identification：教授會議更新
 
-## Problem／Dataset
+## 任務與目前正式結果
 
-任務是由多盤 query 棋譜，辨識 100 位 candidate players 中的同一玩家。官方 train_A.csv：100,000 games／1,582 players。指標為 Top-1／3／5 與 competition score（正確名次 r≤5：exp(-(r-1))，未入 Top-5 為 0）。
+由多盤棋譜在 100 位候選玩家中辨識身份。官方資料：100,000 games／1,582 players；TRAIN／VAL／TEST 身份分開。Round 1 TEST、FINAL TEST 2、FINAL TEST 3 全部永久 CLOSED。
 
-TRAIN／VAL／TEST 分開玩家身份，避免識別已見玩家。Round 1 TEST、FINAL TEST 2 永久 CLOSED；本輪沒有重新讀其棋局、truth 或做 inference。
+已保存的 TEST3：Color-aware Opening Top-1 **0.72**／Score **0.773919**；Frozen Fusion Top-1 **0.74**／Score **0.790240**。Fusion 提升 **+0.016321**，paired bootstrap 95% CI **[−0.022885, 0.052726]** 包含 0，尚不能確認改善穩定。
 
-## Baseline evolution／關鍵發現
+## Baseline evolution 與主要發現
 
-- Opening Fingerprint：用目標玩家實際落子建立 heatmap，平均多盤後 cosine retrieval。開局偏好已提供強訊號。
-- Phase 2.8 color-aware-player-5：黑／白分開 fingerprint，DEV2 score **0.739568**，比非 color-aware player-5 **+0.103179**。
-- Triplet-Hard-100：原 64-channel／8-block encoder，128 embedding；DEV2 best epoch 18、score **0.417385**。Opening 錯的 31 題中，Triplet 單獨補對 9 題。
-- Cross-color gap 很大；配對 CrossColor positive 沒有改善。Stability 同／異玩家 cosine 都接近 1，separation 4.63e-9，全部 128 維近零 variance：**embedding collapse 尚未解決**。
-- Frozen Fusion：每題 candidate scores 分別 z-score，alpha=0.9；DEV2 比 Opening **+0.018698**。模型、epoch、window、alpha 全部 frozen。
+Opening 用目標玩家實際開局落點 heatmap 識別風格；DEV2 分黑／白後 score 提升 **+0.103179**。Triplet 提供部分互補，但表示高度集中。Stability 也見到正向 fusion point estimate，CI 同樣包含 0；所有正式方法保持 frozen。
 
-## Stability／FINAL TEST 3
+## Phase 2.11：collapse 發生在哪裡？
 
-Stability 使用 100 位新玩家，每人 candidate 30／query 10；score 差 **+0.028506**，paired bootstrap 95% CI **[−0.010277, 0.068760]**，未排除零改善。
+這輪只用 DEV2 TRAIN fitting／VAL exploratory evaluation；只載入原 Triplet-Hard-100 epoch 18 checkpoint，SHA256 不變，沒有 training、optimizer 或 backward。沒有讀 CLOSED TEST 棋局／truth／score matrix，也沒有用 Stability truth 選模型。
 
-FINAL TEST 3 排除歷史全部 **615 位身份**，剩餘 154 位至少有 40 盤；抽取 100 位完全新玩家，同樣 30／10 games。所有 identity／game／SGF overlap=0。Preregistration SHA256 綁定資料／split／config／checkpoint，13 項 preflight 通過，只有一次 inference／evaluation。
+**共同方向在 pooled backbone 已出現，projection 後更集中；L2 normalize 不是主要原因。** Raw embedding 在 normalize 前 cosine 已接近 1。改用 raw mean 或改 normalize 時機，DEV score 都維持 **0.417385**。
 
-| method | dev2 | stability | final_test3 |
-| --- | --- | --- | --- |
-| opening | 0.739568 | 0.839382 | 0.773919 |
-| triplet | 0.417385 | 0.408832 | 0.388429 |
-| fusion | 0.758266 | 0.867889 | 0.790240 |
+Raw 的 PC1 吃掉約 **86%** variance，與均值方向對齊；normalized effective rank 約 **93**，表示仍保留微小的高維角度訊號，並非完全恆定輸出。絕對 near-zero variance 門檻受尺度影響，不能單靠它定位 collapse。
 
-FINAL TEST 3 四方法正式結果：
+去中心、移除 PCs、whitening 都沒有超過原 Triplet；單純 remove dominant direction 不是足夠的修復。Color-aware Triplet＋global centering 的 DEV score 升到 **0.480703**，但固定 alpha=0.9 fusion 反而由 **0.758266 降至 0.743930**。Triplet 更高的獨立 score 不保證互補性更好；color-specific centering 也沒有超過 global centering。
 
-| method | top1 | top3 | top5 | competition_score |
-| --- | --- | --- | --- | --- |
-| random | 0.030000 | 0.060000 | 0.080000 | 0.039392 |
-| opening_color_player5 | 0.720000 | 0.890000 | 0.910000 | 0.773919 |
-| triplet_hard100 | 0.300000 | 0.590000 | 0.650000 | 0.388429 |
-| fusion_alpha09 | 0.740000 | 0.900000 | 0.920000 | 0.790240 |
+Within／between ratio 仍約 **0.35**：玩家內棋局差異大於玩家間差異。本輪結論是 encoder/projection 角度集中、color-domain shift 與身份訊號分離不足共同存在；不支持 normalization／aggregation 是單一主因。
 
-Fusion−Opening **+0.016321**，paired bootstrap 95% CI **[-0.022885, 0.052726]**。差值 95% CI 跨 0，不能確認 Fusion 提升穩定，且不能依結果重選 alpha。 三批方法排名一致：True。Triplet 單獨補對 Opening 錯誤 4 題；Fusion 補對 4 題。
+## 限制與下一個研究方向
 
-## 限制與下一個研究問題
+DEV2 已反覆探索，本轮最高後處理結果不是新 final model；沒有新 selected YAML／frozen model。只量測 pooled backbone，尚不能定位到某 residual block；沒有訓練 intervention，不能證明特定 loss 是原因。
 
-各 partition 玩家難度可能不同；100 questions 的 CI 仍寬，DEV2 已反覆選模型／alpha，不能把 point estimate 改善當作最終定論。Triplet collapse 尚未解決，跨色效果仍弱。
+最值得討論：**先建立新的 DEV protocol，研究能監測並控制共同均值方向／角度集中與玩家分離度的身份辨識目標，並控制黑／白色彩域因素。** 再規劃 sampling／loss／projection 的受控研究，不以 CLOSED TEST 結果調參。
 
-下一步只提出研究建議：在新的 DEV protocol 控制同色／跨色難度；先診斷 representation collapse 與 aggregation；事前固定 Fusion 假設，以更多獨立身份驗證其改善。
-
-**FINAL TEST 3 已永久 CLOSED，evaluation_count=1。103 tests／imports／syntax 全通過。**不使用 TEST3 調參，不重跑，不進 Phase 3；不加入 Strength Estimator、MiniZero 或新模型。
+**118 tests／imports／syntax 全通過；checkpoint／forward／historical split 全保留。** 本輪未訓練新模型、不加入 Strength Estimator／MiniZero、不建立新 FINAL TEST。完整數據見 [phase211_results.md](phase211_results.md)。
