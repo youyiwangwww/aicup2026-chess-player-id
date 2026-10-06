@@ -28,4 +28,10 @@ DEV2 已反覆探索，本轮最高後處理結果不是新 final model；沒有
 
 最值得討論：**先建立新的 DEV protocol，研究能監測並控制共同均值方向／角度集中與玩家分離度的身份辨識目標，並控制黑／白色彩域因素。** 再規劃 sampling／loss／projection 的受控研究，不以 CLOSED TEST 結果調參。
 
-**118 tests／imports／syntax 全通過；checkpoint／forward／historical split 全保留。** 本輪未訓練新模型、不加入 Strength Estimator／MiniZero、不建立新 FINAL TEST。完整數據見 [phase211_results.md](phase211_results.md)。
+**Phase 2.11：118 tests／imports／syntax 全通過；checkpoint／forward／historical split 全保留。** 未訓練新模型、不加入 Strength Estimator／MiniZero、不建立新 FINAL TEST。完整數據見 [phase211_results.md](phase211_results.md)。
+
+## Phase 2.12：DEV3 資料門檻
+
+排除歷史 715 位身份後，未使用玩家中只有 **175 位至少 20 盤、54 位至少 40 盤**。指定 150 TRAIN＋50 VAL 必須有 200 位互斥身份；保留 50 VAL 後 TRAIN 最多 **125 位**，少 25 位。
+
+因此沒有建立 DEV3 或訓練 A0–A3，沒有降低規模／重用舊身份；anti-collapse regularization **尚未評估，不能判定成功或失敗**。需先補足未使用玩家資料或另行明確制定新的規模，才進行受控實驗。現有完整 **123 tests／imports／syntax 通過**；新增的是資料門檻與歷史隔離測試。詳見 [phase212_results.md](phase212_results.md)。

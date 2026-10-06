@@ -357,6 +357,15 @@ python scripts/verify_phase211.py
 
 診斷已完成；`python -m src.phase211_forensics --config configs/phase211.yaml` 會拒絕重做完整推論。資料與表格存於 `outputs/phase211/`，詳見 [docs/phase211_results.md](docs/phase211_results.md)。本輪沒有訓練新模型、修改 frozen selection，或建立 `phase211_selected.yaml`。
 
+## Phase 2.12：DEV3 資料資格不足，尚未訓練
+
+```powershell
+python scripts/phase212_eligibility.py
+python scripts/check_phase212.py
+```
+
+排除歷史身份後，175 位達 20 盤／54 位達 40 盤；保留指定 50 VAL 後最多只有 125 TRAIN，未達 150 TRAIN。因此第一個指令預期 exit code=1，不會建立 split 或啟動 training。資格紀錄位於 `outputs/phase212/eligibility.json`，說明見 [docs/phase212_results.md](docs/phase212_results.md)。本輪沒有降低規模或建立 FINAL TEST 4。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)
