@@ -1,0 +1,65 @@
+protocol: Phase 2.12-R
+seed: 42
+output_dir: outputs/phase212
+paths:
+  training_csv: data/training/train_A.csv
+  metric_train_csv: outputs/phase212/splits/train.csv
+  val_candidates_csv: outputs/phase212/splits/val_candidates.csv
+  val_queries_csv: outputs/phase212/splits/val_queries.csv
+  val_ground_truth_csv: outputs/phase212/splits/val_ground_truth.csv
+  cache_dir: outputs/phase212/features
+  train_manifest: outputs/phase212/features/train.json
+  val_candidate_manifest: outputs/phase212/features/candidate.json
+  val_query_manifest: outputs/phase212/features/query.json
+split:
+  train_players: 100
+  train_games: 20
+  val_players: 50
+  candidate_games: 30
+  query_games: 10
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 16
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 64
+  num_blocks: 8
+  embedding_dim: 128
+  pool_size: 3
+training:
+  device: cuda
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  margin: 0.2
+  triplets_per_player_per_epoch: 20
+  num_threads: 4
+  deterministic: true
+regularizers:
+  lambda_mean: 0.1
+  lambda_var: 1.0
+  gamma: inverse_sqrt_128
+  variance_epsilon: 0.0001
+  variance_correction: 0
+diagnostics:
+  players: 20
+  games_per_player: 5
+  variance_threshold: 1.0e-8
+inference:
+  batch_size: 64
+fusion:
+  opening_mode: player
+  opening_window: 5
+  color_aware: true
+  alpha: 0.9
+  normalization: z-score
+experiments:
+  - A0-Triplet
+  - A1-Triplet-Mean
+  - A2-Triplet-Variance
+  - A3-Triplet-MeanVariance

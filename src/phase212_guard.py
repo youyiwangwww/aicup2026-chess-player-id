@@ -22,6 +22,14 @@ def _guard(event,args):
         if historical and not allowed_meta:
             raise PermissionError('Phase 2.12 refuses historical TEST/DEV/Stability data, scores and checkpoints')
         mutation=event!='open' or any(c in (args[1] or '') for c in 'wax+') or (args[2] or 0)&(os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        if mutation and path.endswith(('/outputs/phase212/eligibility.json','/outputs/phase212/blocked_summary.json')):
+            raise PermissionError('Original blocked Phase 2.12 record must be preserved')
+        if mutation and '/outputs/phase212/splits/' in path:
+            audit=Path(path).parent/'split_audit.json'
+            if audit.exists():
+                raise PermissionError('DEV3 split is frozen')
+        if mutation and path.endswith(('/outputs/phase212/revised_protocol.json','/outputs/phase212/train_diagnostic_subset.json')) and Path(path).exists():
+            raise PermissionError('User revision and fixed TRAIN diagnostic subset are immutable')
         if mutation and (historical or '/data/' in path or path.endswith('/configs/phase28_selected.yaml')):
             raise PermissionError('Historical data and identity metadata are immutable')
 

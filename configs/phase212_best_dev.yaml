@@ -1,0 +1,15 @@
+status: DEV3 RESEARCH CANDIDATE ONLY
+not_final_model: true
+no_test_evaluation: true
+criterion: highest DEV3 normal retrieval competition score; geometry reported separately
+experiment: A3-Triplet-MeanVariance
+best_epoch: 19
+checkpoint: outputs/phase212/experiments/A3-Triplet-MeanVariance/best.pt
+metrics:
+  experiment: A3-Triplet-MeanVariance
+  best_epoch: 19
+  top1: 0.6
+  top3: 0.74
+  top5: 0.82
+  competition_score: 0.6455548923264552
+geometry_classification: RETRIEVAL IMPROVED WITHOUT CLEAR GEOMETRY FIX

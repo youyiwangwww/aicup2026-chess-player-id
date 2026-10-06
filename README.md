@@ -366,6 +366,20 @@ python scripts/check_phase212.py
 
 排除歷史身份後，175 位達 20 盤／54 位達 40 盤；保留指定 50 VAL 後最多只有 125 TRAIN，未達 150 TRAIN。因此第一個指令預期 exit code=1，不會建立 split 或啟動 training。資格紀錄位於 `outputs/phase212/eligibility.json`，說明見 [docs/phase212_results.md](docs/phase212_results.md)。本輪沒有降低規模或建立 FINAL TEST 4。
 
+## Phase 2.12-R：Revised Anti-Collapse Metric Learning
+
+使用者在任何訓練前授權改成 100 TRAIN／50 VAL；原 Phase 2.12-A 的資格不足紀錄永久保留。DEV3 排除所有历史 identities，四組從同一 random initialization 訓練，固定 mean／variance regularizer，不搜尋超參數。既有 CLOSED TEST 不可讀取，也不建立 FINAL TEST 4。
+
+```powershell
+python scripts/check_phase212.py
+python -m src.run_phase212 --config configs/phase212.yaml --prepare
+python -m src.run_phase212 --config configs/phase212.yaml
+python scripts/verify_phase212.py
+python scripts/report_phase212.py
+```
+
+訓練需要 CUDA PyTorch；已完成的實驗會沿用保存的結果，不重新選 split。不要重新執行原 eligibility script 覆寫歷史 blocked records。完整結果見 [docs/phase212_results.md](docs/phase212_results.md)。`configs/phase212_best_dev.yaml` 僅為 DEV3 research candidate，並非 final model。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)

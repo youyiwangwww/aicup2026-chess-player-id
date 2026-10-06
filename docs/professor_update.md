@@ -1,37 +1,45 @@
 # Go Player Identification：教授會議更新
 
-## 任務與目前正式結果
+## 研究問題與已知背景
 
-由多盤棋譜在 100 位候選玩家中辨識身份。官方資料：100,000 games／1,582 players；TRAIN／VAL／TEST 身份分開。Round 1 TEST、FINAL TEST 2、FINAL TEST 3 全部永久 CLOSED。
+由多盤棋譜辨識未見玩家。既有Triplet在normalize前已共同方向集中，projection後更嚴重；centering／remove-PC／whitening沒有超過原方法。所有既有TEST永久CLOSED，不作這輪選擇。
 
-已保存的 TEST3：Color-aware Opening Top-1 **0.72**／Score **0.773919**；Frozen Fusion Top-1 **0.74**／Score **0.790240**。Fusion 提升 **+0.016321**，paired bootstrap 95% CI **[−0.022885, 0.052726]** 包含 0，尚不能確認改善穩定。
+## Phase 2.12-A／2.12-R
 
-## Baseline evolution 與主要發現
+原150 TRAIN／50 VAL在任何training前因資格不足阻擋。使用者事前明確改成100／50，保留blocked紀錄；不是看結果後改規模。
 
-Opening 用目標玩家實際開局落點 heatmap 識別風格；DEV2 分黑／白後 score 提升 **+0.103179**。Triplet 提供部分互補，但表示高度集中。Stability 也見到正向 fusion point estimate，CI 同樣包含 0；所有正式方法保持 frozen。
+新DEV3：100 TRAIN×20games；50 VAL×candidate30/query10。排除715位歷史身份，所有identity／game／exact SGF overlap=0。四組同seed42、初始化、架構、cache、sampling與20epochs，只改固定mean／variance regularizer。
 
-## Phase 2.11：collapse 發生在哪裡？
+## 核心結果
 
-這輪只用 DEV2 TRAIN fitting／VAL exploratory evaluation；只載入原 Triplet-Hard-100 epoch 18 checkpoint，SHA256 不變，沒有 training、optimizer 或 backward。沒有讀 CLOSED TEST 棋局／truth／score matrix，也沒有用 Stability truth 選模型。
+| experiment | best_epoch | top1 | top3 | top5 | competition_score |
+| --- | --- | --- | --- | --- | --- |
+| A0-Triplet | 16 | 0.560000 | 0.700000 | 0.760000 | 0.585956 |
+| A1-Triplet-Mean | 19 | 0.540000 | 0.720000 | 0.780000 | 0.590602 |
+| A2-Triplet-Variance | 10 | 0.600000 | 0.680000 | 0.840000 | 0.634879 |
+| A3-Triplet-MeanVariance | 19 | 0.600000 | 0.740000 | 0.820000 | 0.645555 |
 
-**共同方向在 pooled backbone 已出現，projection 後更集中；L2 normalize 不是主要原因。** Raw embedding 在 normalize 前 cosine 已接近 1。改用 raw mean 或改 normalize 時機，DEV score 都維持 **0.417385**。
+Best epoch只依normal DEV3 score，color-aware／fusion不參與選擇。
 
-Raw 的 PC1 吃掉約 **86%** variance，與均值方向對齊；normalized effective rank 約 **93**，表示仍保留微小的高維角度訊號，並非完全恆定輸出。絕對 near-zero variance 門檻受尺度影響，不能單靠它定位 collapse。
+| experiment | mean_direction_norm | raw_pc1_explained | cosine_separation | between_within_ratio | classification |
+| --- | --- | --- | --- | --- | --- |
+| A0-Triplet | 0.999999922473 | 0.886261 | 6.3287219e-09 | 0.398375 | A0 REFERENCE |
+| A1-Triplet-Mean | 0.999999935276 | 0.747456 | 6.1774347e-09 | 0.414580 | RETRIEVAL IMPROVED WITHOUT CLEAR GEOMETRY FIX |
+| A2-Triplet-Variance | 0.999999808790 | 0.790375 | 1.1640872e-08 | 0.356794 | PROMISING REPRESENTATION INTERVENTION |
+| A3-Triplet-MeanVariance | 0.999999933257 | 0.830781 | 6.2502277e-09 | 0.403373 | RETRIEVAL IMPROVED WITHOUT CLEAR GEOMETRY FIX |
 
-去中心、移除 PCs、whitening 都沒有超過原 Triplet；單純 remove dominant direction 不是足夠的修復。Color-aware Triplet＋global centering 的 DEV score 升到 **0.480703**，但固定 alpha=0.9 fusion 反而由 **0.758266 降至 0.743930**。Triplet 更高的獨立 score 不保證互補性更好；color-specific centering 也沒有超過 global centering。
+原A0是否仍達collapse警示：True；A1共同方向是否降低：False；A2spread是否增加：True；A3是否normal retrieval最高：True。不能只因effective rank高就判成功。
 
-Within／between ratio 仍約 **0.35**：玩家內棋局差異大於玩家間差異。本輪結論是 encoder/projection 角度集中、color-domain shift 與身份訊號分離不足共同存在；不支持 normalization／aggregation 是單一主因。
+**PROMISING REPRESENTATION INTERVENTION**。至少一個固定 intervention 在 DEV3 同時提高 retrieval，且四個主要 geometry 指標有至少三項改善。仍只有單 seed／單 DEV3，不能宣稱泛化已確認。 四組 mean direction norm 都仍接近 1，near-zero dimension fraction 都為 100%；A2 cosine separation 雖上升，仍只有約 1e-8，between/within 反而下降。方向性 promising 不等於 collapse 已解決，也不代表統計顯著改善。
 
-## 限制與下一個研究方向
+## Secondary diagnostics
 
-DEV2 已反覆探索，本轮最高後處理結果不是新 final model；沒有新 selected YAML／frozen model。只量測 pooled backbone，尚不能定位到某 residual block；沒有訓練 intervention，不能證明特定 loss 是原因。
+Opening reference score=0.903435。Color-aware提升的實驗：A1-Triplet-Mean, A3-Triplet-MeanVariance。固定alpha0.9 fusion高於Opening的實驗：A0-Triplet, A2-Triplet-Variance, A3-Triplet-MeanVariance；沒有alpha search。
 
-最值得討論：**先建立新的 DEV protocol，研究能監測並控制共同均值方向／角度集中與玩家分離度的身份辨識目標，並控制黑／白色彩域因素。** 再規劃 sampling／loss／projection 的受控研究，不以 CLOSED TEST 結果調參。
+## 限制與下一步
 
-**Phase 2.11：118 tests／imports／syntax 全通過；checkpoint／forward／historical split 全保留。** 未訓練新模型、不加入 Strength Estimator／MiniZero、不建立新 FINAL TEST。完整數據見 [phase211_results.md](phase211_results.md)。
+單seed／單DEV3、50questions，候選僅DEV3 research candidate，非final model。Geometry與retrieval分開判斷，沒有建立新FINAL TEST。
 
-## Phase 2.12：DEV3 資料門檻
+先確認joint improvement的多seed／新DEV穩定性，再討論SupCon受控比較；目前不需要直接跳過此intervention。
 
-排除歷史 715 位身份後，未使用玩家中只有 **175 位至少 20 盤、54 位至少 40 盤**。指定 150 TRAIN＋50 VAL 必須有 200 位互斥身份；保留 50 VAL 後 TRAIN 最多 **125 位**，少 25 位。
-
-因此沒有建立 DEV3 或訓練 A0–A3，沒有降低規模／重用舊身份；anti-collapse regularization **尚未評估，不能判定成功或失敗**。需先補足未使用玩家資料或另行明確制定新的規模，才進行受控實驗。現有完整 **123 tests／imports／syntax 通過**；新增的是資料門檻與歷史隔離測試。詳見 [phase212_results.md](phase212_results.md)。
+**143 tests／imports／syntax通過；原blocked records與歷史artifacts保留。** 不加入Strength Estimator／MiniZero／classification head，不建立FINAL TEST4。完整結果見[phase212_results.md](phase212_results.md)。
