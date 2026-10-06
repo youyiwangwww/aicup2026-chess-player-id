@@ -1,4 +1,4 @@
-# AI CUP 2026 圍棋玩家辨識：Phase 2.5 進度
+# AI CUP 2026 圍棋玩家辨識：Real Experiment Round 1
 
 報告：2026-10-07（三）；驗證紀錄：2026-10-06。
 
@@ -8,7 +8,7 @@
 
 ## 2. Data
 
-正式實驗只使用 A rank group 的 `data/training/train_A.csv`，player_id 僅用於 TRAIN triplets，rank 不作辨識 label。**正式 CSV 尚未放入，沒有 real 結果。Mock data 僅用於 pipeline validation，不能當作模型效果。**
+正式實驗使用 A rank group 的 `data/training/train_A.csv`，rank 不作辨識 label。正式資料有 100,000 盤、1,582 位玩家，每人棋譜平均 63.21、中位數 24、範圍 1–924 盤。黑白各半，game_id 與 SGF 字串重複數皆 0；原始 CSV 未修改。
 
 ## 3. Random baseline
 
@@ -26,22 +26,26 @@
 
 三組玩家身份互斥；TRAIN 只做梯度，VAL 每 epoch 選 best checkpoint，TEST 不在訓練時載入。訓練完成後固定 best.pt，才允許一次 final test。Random/Opening/Triplet 使用同一 TEST，所有 player/game/SGF 交集共 23 項，非零立即報錯。
 
-42 項 tests 通過，包含實際攔截訓練 I/O、確認 TEST ground truth/cache 未讀取、Dataset 不使用 validation 身份、checkpoint 只依 VAL，以及 final test 的執行時序。Mock 為 4 TRAIN／4 VAL／6 TEST，五組 preprocessing 成功率 100%，每盤抽 4 個 positions；這只表示流程正常。
+42 項 tests 全部通過，包含訓練 I/O 隔離與 final test 時序。固定 seed 42，Train / Validation / Test players 完全不同，分別為 30／10／10 位。TRAIN 300 盤，VAL candidate/query 為 100／50 盤，TEST candidate/query 為 100／50 盤；23 項交集檢查全部為 0。五組 feature coverage 皆為 100%，600 盤皆成功，每盤抽 4 個 positions。
 
 ## 7. Real experiment results
 
 | Real TEST 方法 | Top1 | Top3 | Top5 | Score |
 | --- | --- | --- | --- | --- |
-| Random | 未執行 | 未執行 | 未執行 | 未執行 |
-| Opening | 未執行 | 未執行 | 未執行 | 未執行 |
-| Triplet | 未執行 | 未執行 | 未執行 | 未執行 |
+| Random | 0% | 10% | 40% | 0.019028 |
+| Opening | 60% | 90% | 100% | 0.715343 |
+| Triplet | 20% | 30% | 70% | 0.230301 |
 
-已備妥 real quick（30 TRAIN／10 VAL／10 TEST）、coverage、dataset SHA-256、環境版本與 summary。待資料放入後執行，再手動跑 seeds 42/123/2026，報告全部結果及 mean/std，不挑最好 test seed。
+使用原本 `configs/real_quick.yaml` 完成 3 epochs；best epoch 為 1，僅依 Validation competition score 0.317174 選取。固定 best checkpoint 後只執行一次 TEST。三種方法使用相同的 10 位候選玩家與 10 個 questions，每 question 含 5 盤 query。Triplet 與 Opening 皆高於這次 Random，Triplet 低於 Opening。完整 pipeline 在 CPU 耗時 59.20 秒，正式執行沒有 warning/error。
 
 ## 8. Current limitation
 
-尚無真實資料證據；特徵取樣少、triplets 隨機、SGF 去重僅字串相等。VAL 是模型選擇資料；不能依 TEST 分數調參，否則最終 TEST 的獨立性失效。
+本輪只是 smoke experiment，不能宣稱最終模型效果。TRAIN 僅 30 位玩家、每人 10 盤，只訓練 3 epochs、每盤抽 4 個 positions，triplets 隨機；TEST 僅 10 個 questions，Random 單次結果波動大。SGF 去重僅字串相等。未使用 TEST 調參或選 checkpoint；目前無法確定 Triplet 較弱的因果原因。
 
-## 9. Next Phase：Strength-aware Player Identification
+## 9. 下一輪實驗建議（尚未實作）
 
-先取得可信的 real baseline，再研究棋力資訊是否有助於風格辨識，以控制變因與消融驗證。此輪未加入 Strength Estimator、MiniZero 或新模型。
+1. 預先指定多個 seed，完整回報所有結果與 mean/std，評估小型 split 的波動，不挑最佳 TEST seed。
+2. 固定新一輪 split，比較更多 TRAIN 玩家與每人棋譜数，只依 VAL 評估資料量影響。
+3. 分開比較 epochs 與每盤 sampled positions，控制變因；只依 VAL 決定設定，再對新的 held-out TEST 評估一次。
+
+本輪未新增模型，也未加入 Strength Estimator、rank auxiliary loss、MiniZero 或 policy fingerprint。
