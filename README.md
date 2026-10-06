@@ -322,6 +322,18 @@ python -m src.run_phase26 --config configs/phase26.yaml
 
 Receipt 位於 `outputs/phase26/final_test2/final_test2_receipt.json`，evaluation_count = 1。`python -m src.phase27_final_test2` 再次執行將拒絕；既有 preprocessing 入口也不能重開此 split。Phase 2.6 runner 已停止接受重跑，frozen config／checkpoint 保持原值。文件與比較表只能由保存的結果產生，不會再次 inference。
 
+## Phase 2.9：Stability Validation
+
+使用全新身份驗證 frozen Color-aware-player-5、Triplet-Hard-100 與 alpha=0.9 z-score Fusion，不重新選擇模型或參數。Round 1 TEST／FINAL TEST 2 不可讀取；DEV2 不作本輪模型選擇。
+
+```powershell
+python scripts/check_phase29.py
+python -m src.phase29_validation --config configs/phase29.yaml
+python scripts/report_phase29.py
+```
+
+本輪已完成，第二個指令會拒絕再次 inference；報告可從保存結果重建。結果位於 `outputs/phase29/`，完整解讀見 [docs/phase29_results.md](docs/phase29_results.md)。READY 判定不會建立 FINAL TEST 3。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)
