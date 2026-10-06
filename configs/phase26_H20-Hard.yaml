@@ -1,0 +1,88 @@
+dataset_kind: real
+seed: 42
+output_dir: outputs/phase26/experiments/H20-Hard
+paths:
+  training_csv: data/training/train_A.csv
+  round1_summary: outputs/results/experiment_summary.json
+  round1_test_candidates: outputs/splits/test_candidates.csv
+  round1_archive: outputs/round1_archive
+  metric_train_csv: outputs/phase26/experiments/H20-Hard/train.csv
+  val_candidates_csv: outputs/phase26/splits/dev_val_candidates.csv
+  val_queries_csv: outputs/phase26/splits/dev_val_queries.csv
+  val_ground_truth_csv: outputs/phase26/splits/dev_val_ground_truth.csv
+  test_candidates_csv: outputs/phase26/splits/final_test2_candidates.csv
+  test_queries_csv: outputs/phase26/splits/final_test2_queries.csv
+  test_ground_truth_csv: outputs/phase26/splits/final_test2_ground_truth.csv
+  split_audit_json: outputs/phase26/experiments/H20-Hard/split_audit.json
+  best_checkpoint: outputs/phase26/experiments/H20-Hard/best.pt
+  last_checkpoint: outputs/phase26/experiments/H20-Hard/last.pt
+  training_state_json: outputs/phase26/experiments/H20-Hard/training_state.json
+  training_log_csv: outputs/phase26/experiments/H20-Hard/training_log.csv
+  feature_errors_csv: outputs/phase26/experiments/H20-Hard/feature_errors.csv
+  feature_coverage_csv: outputs/phase26/experiments/H20-Hard/feature_coverage.csv
+  cache_dir: outputs/phase26/features/k16
+  train_manifest: outputs/phase26/experiments/H20-Hard/train_manifest.json
+  val_candidate_manifest: outputs/phase26/features/k16/val_candidate.json
+  val_query_manifest: outputs/phase26/features/k16/val_query.json
+split:
+  train_players: 30
+  val_players: 50
+  test_players: 50
+  train_games_per_player: 10
+  val_candidate_games: 20
+  val_query_games: 10
+  test_candidate_games: 40
+  test_query_games: 10
+features:
+  board_size: 19
+  history_length: 8
+  max_positions_per_game: 16
+cache:
+  games_per_shard: 128
+  max_cached_shards: 2
+model:
+  in_channels: 17
+  channels: 64
+  num_blocks: 8
+  embedding_dim: 128
+  pool_size: 3
+training:
+  device: auto
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.001
+  margin: 0.2
+  weight_decay: 0.0001
+  samples_per_epoch: 512
+  num_workers: 0
+  num_threads: 4
+  deterministic: true
+  triplet_strategy: batch_hard
+inference:
+  batch_size: 64
+  top_k: 5
+opening:
+  board_size: 19
+  opening_moves: 40
+diagnosis:
+  windows:
+  - 10
+  - 20
+  - 40
+  - 60
+  - 100
+  data_sizes:
+  - - 30
+    - 10
+  - - 100
+    - 20
+  - - 200
+    - 20
+  positions:
+  - 4
+  - 8
+  - 16
+  max_epochs: 20
+  cross_color_candidate_games: 20
+  cross_color_query_games: 10
+experiment: H20-Hard

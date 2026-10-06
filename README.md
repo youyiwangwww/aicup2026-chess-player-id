@@ -278,13 +278,13 @@ python -m pip check
 | Opening | 1.000000 | 1.000000 | 1.000000 | 1.000000 |
 | Triplet | 0.166667 | 0.833333 | 1.000000 | 0.342703 |
 
-Mock loss 由 0.214364 降到 0.097343，retrieval score 未改善，best 保留 epoch 1。這只驗證流程，不能當真實競賽效果。正式 `data/training/train_A.csv` 目前不存在，沒有真實成績。
+Phase 2 當時的 Mock loss 由 0.214364 降到 0.097343，retrieval score 未改善，best 保留 epoch 1。這只驗證流程，不能當真實競賽效果。後續正式 Round 1 已完成，永久紀錄見 [docs/round1_results.md](docs/round1_results.md)；該 TEST 已 CLOSED，不得再調參。
 
 紀錄：`outputs/phase2_mock/verification.json`。概念：[docs/phase2.md](docs/phase2.md)；教授報告：[docs/professor_update.md](docs/professor_update.md)。
 
 ## 已知限制與下一步
 
-- 隨機 triplets，尚未使用 hard/semi-hard negative mining。
+- Phase 2.5 保留隨機 triplets；Phase 2.6 在獨立 DEV runner 中另比較 batch hard negative。
 - 少量 position、簡單 ResNet 與平均聚合，不能保證超過 Opening。
 - sgfmill 處理提子，但不做完整 ko/superko 裁判驗證。
 - SGF 字串去重不能辨識改過註解的相同棋局。
@@ -292,7 +292,18 @@ Mock loss 由 0.214364 降到 0.097343，retrieval score 未改善，best 保留
 - CSV 仍一次載入記憶體；特徵已分 shard，尚無分批 CSV 讀取。
 - 固定 seed 的重現性限相同硬體/套件環境，不保證跨平台數值完全一致。
 
-Phase 3 預計研究 Strength Estimator 整合，先以對照實驗確認棋力資訊是否有助於風格辨識。
+是否進 Phase 3 需在 DEV 診斷完成後另行決定，本輪僅執行 Phase 2.6。
+
+## Phase 2.6：Triplet Baseline Diagnosis
+
+Round 1 原始結果保持不變，另備份至 `outputs/round1_archive/`。新的 200 DEV TRAIN／50 DEV VAL／50 FINAL TEST 2 身份互斥；排除 Round 1 CLOSED TEST 玩家。此輪只用 DEV VAL 比較 Opening windows、資料量、positions、epochs、random/batch-hard negatives、cross-color 與 embedding similarity。
+
+```powershell
+python scripts/check_phase26.py
+python -m src.run_phase26 --config configs/phase26.yaml
+```
+
+結果寫入 `outputs/phase26/`，所有實驗設定分開保存。完整方法、控制變因與輸出說明見 [docs/phase26.md](docs/phase26.md)。完成後選定 `configs/phase26_selected.yaml`，停止並等待使用者明確授權一次 FINAL TEST 2；本輪不輸出其分數。
 
 ## 參考
 
