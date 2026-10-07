@@ -380,6 +380,20 @@ python scripts/report_phase212.py
 
 訓練需要 CUDA PyTorch；已完成的實驗會沿用保存的結果，不重新選 split。不要重新執行原 eligibility script 覆寫歷史 blocked records。完整結果見 [docs/phase212_results.md](docs/phase212_results.md)。`configs/phase212_best_dev.yaml` 僅為 DEV3 research candidate，並非 final model。
 
+## Phase 2.13：Multi-Seed Anti-Collapse Stability
+
+沿用 Phase 2.12-R frozen DEV3 split 與全部 feature cache，split seed 永遠為 42。Seed 42 僅引用既有結果；新增 training seeds 123／2026／31415，各跑四個固定 objective。所有模型僅為 DEV RESEARCH ONLY，不建立 final model 或 FINAL TEST 4。
+
+```powershell
+python scripts/check_phase213.py
+python -m src.run_phase213 --check
+python -m src.run_phase213 --config configs/phase213.yaml
+python scripts/verify_phase213.py
+python scripts/report_phase213.py
+```
+
+需要 CUDA PyTorch。完成後不可重新執行訓練；若執行中斷，runner 只允許相同 protocol 的原 run resume。不要重跑 Phase 2.12 的 preprocessing 或 check script（會覆寫其 verification），本輪使用 Phase 2.13 的專屬檢查。完整記錄見 [docs/phase213_results.md](docs/phase213_results.md)。
+
 ## 參考
 
 - [官方 Tutorial](https://github.com/AILAB-NDHU/AICup-2026-Tutorial)

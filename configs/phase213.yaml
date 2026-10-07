@@ -1,0 +1,10 @@
+protocol: Phase 2.13
+status: DEV RESEARCH ONLY
+split_seed: 42
+training_seeds: [42, 123, 2026, 31415]
+reference_config: configs/phase212.yaml
+output_dir: outputs/phase213
+seed42_reference_only: true
+aggregate_std_ddof: 1
+no_test_evaluation: true
+no_new_split: true
