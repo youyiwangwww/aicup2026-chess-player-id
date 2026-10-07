@@ -24,7 +24,7 @@ def main():
     with (out/'tests.log').open('w',encoding='utf-8') as stream,redirect_stdout(stream),redirect_stderr(stream):
         suite=unittest.TestSuite()
         for p in sorted((ROOT/'tests').glob('test_*.py')):
-            if p.name!='test_phase31.py':suite.addTests(unittest.defaultTestLoader.discover(str(ROOT/'tests'),pattern=p.name))
+            if p.name not in {'test_phase31.py','test_phase31b.py'}:suite.addTests(unittest.defaultTestLoader.discover(str(ROOT/'tests'),pattern=p.name))
         old=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
         if not old.wasSuccessful() or old.testsRun!=191:raise SystemExit('Original191tests failed')
         new=unittest.TextTestRunner(stream=stream,verbosity=2).run(unittest.defaultTestLoader.discover(str(ROOT/'tests'),pattern='test_phase31.py'))

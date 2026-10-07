@@ -32,3 +32,13 @@ MiniZero C++/binding build、verifiedweights forward、Policy／Strength trainin
 | 14 B/W | pre-moveown/opponent及turnplanes正確 | 停止 |
 
 所有gates過關才允許提議Phase3.2PolicyFingerprint DEV實驗。第一手用Env.reset/get_features；不使用post-movefeatures。另檢查illegal/setup/shortgamefail分類、samplingdeterminism及hookcleanup。Phase3.2先preregistersplit／features／normalization／missingbank／fixedfusion，再測standalone與Opening四格互補性；不直接開FINAL TEST。
+
+## Phase 3.1B 環境稽核更新（2026-10-07）
+
+保留上述 Phase 3.0／3.1 歷史。本輪最終 **ENVIRONMENT BLOCKED**：Windows 與 WSL 均未找到 Docker／Podman，官方 `kds285/minizero:latest` 未拉取／啟動；WSL 仍缺 CMake、Torch／LibTorch、Boost、OpenCV、ALE。沒有自動安裝系統套件、修改教授 source 或啟動 bootstrap。
+
+教授 pinned commit 正確且 tracked source clean；professor checkpoint 與 referenced matching cfg 仍 NOT AVAILABLE。建立 feature-only cfg、real binding 驗證函式、TRAIN-only guards、18 個 gates 與獨立 checker。原 216 tests 通過；新增 14 通過、9 integration skipped。230 passed／9 skipped 不代表 real feature pipeline PASS。Phase 2.12／2.13／3.0／3.1 artifacts hashes 與 frozen bindings 均保留。
+
+下一步先提供既有可用 container runtime／官方 image CPU 環境，再 build 與 real Env／18-plane semantics／TRAIN pre-move replay。這些 PASS 且 bootstrap architecture 三方核對成功後，才可使用本輪授權的 tiny bootstrap 預算：CPU、seed42、batch8、最多200steps、≤5000 TRAIN positions；連續3steps各超過5分鐘則停止並保存 work。不得以 filename 推導當作 checkpoint matching cfg。**目前不是只剩 checkpoint blocker，NOT READY FOR PHASE 3.2 ENGINEERING**。
+
+完整結果與證據：[phase31b_results.md](phase31b_results.md)。禁止 Player-ID performance、VAL／Stability／CLOSED TEST／FINAL TEST 保持有效。
