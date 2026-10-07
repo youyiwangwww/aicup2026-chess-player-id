@@ -1,4 +1,5 @@
 .venv/
+external_refs/
 .test-tmp/
 __pycache__/
 *.py[cod]

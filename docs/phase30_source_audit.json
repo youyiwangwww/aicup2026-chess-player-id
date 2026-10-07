@@ -1,0 +1,236 @@
+{
+  "audit_date": "2026-10-07",
+  "repositories": {
+    "official": {
+      "repo": "AILAB-NDHU/AICup-2026-Tutorial",
+      "branch": "main",
+      "commit": "359e06fcaf811f9e87179f12f71425dd18dbabd1",
+      "tree_truncated": false,
+      "tree_entries": 7,
+      "release_count": 0,
+      "checkpoint_extension_matches": [],
+      "source_files": {
+        "README.md": {
+          "sha256": "72cbff41947058c0384d2890f23ecbe0bd5e867f16f02e461a9f5e910be8c32a",
+          "bytes": 10566
+        },
+        "network.py": {
+          "sha256": "794a0d9cc9a20984292a3746bcec6f6e106dac2ef14394cc0d142958693ec3b6",
+          "bytes": 2955
+        },
+        "utils.py": {
+          "sha256": "3bdf715c6211282be103a75275ce211fdead65703d230b21db5be6ac411c1e63",
+          "bytes": 8932
+        },
+        "player-identification.ipynb": {
+          "sha256": "e448e67666709c0908db4233aa016f27e1e2efc6f85ee03ebe0e17ee9f1b2ae6",
+          "bytes": 28852
+        }
+      },
+      "checkpoint_download_link_verified": false,
+      "link_review_scope": "downloaded README, configs and training/build/data scripts only; not the whole Internet"
+    },
+    "strength": {
+      "repo": "rlglab/strength-estimator",
+      "branch": "iclr2025",
+      "commit": "d9498964e2ba84b5798c40e3f5b8a91a8791d66c",
+      "tree_truncated": false,
+      "tree_entries": 241,
+      "release_count": 0,
+      "checkpoint_extension_matches": [],
+      "source_files": {
+        "README.md": {
+          "sha256": "d1c1c85c2a3181fce9d90784296c6051d23dd968d19c483f584ffe0a43d48797",
+          "bytes": 11962
+        },
+        "strength/trainer/bt_network.py": {
+          "sha256": "df60f7200c0a863973dc89b40a086ecf87bb1bd0b6249af6b997e804d612b015",
+          "bytes": 4020
+        },
+        "strength/trainer/rank_network.py": {
+          "sha256": "a1ac5514fcc939b822ed7780fac1933e1ebf564db0adde93671a0f1e9d8e424d",
+          "bytes": 2546
+        },
+        "strength/trainer/create_network.py": {
+          "sha256": "834626f2d9422bc5304d5ff80c0fefe6825ae44f6baa1447a6909ffc933bbbe1",
+          "bytes": 2579
+        },
+        "strength/trainer/train.py": {
+          "sha256": "1195fcfcb92bf83a12134c521e6301fcf2b1b9f18972a1f2d941ca10588b1492",
+          "bytes": 13756
+        },
+        "strength/trainer/st_data_loader.cpp": {
+          "sha256": "74965125f9548a6dedfdf18a9123458b4caed9dffe7f3128493853d19baee2e0",
+          "bytes": 10529
+        },
+        "strength/trainer/pybind.cpp": {
+          "sha256": "25dbcee2101202d94667cfc26960f305a5ada7840e2b3be71407d8e01a1780c4",
+          "bytes": 6087
+        },
+        "cfg/se_go.cfg": {
+          "sha256": "0ae207f1bd957647bcf479f102a7f99a94df58a796593b5a33bb284d01a826be",
+          "bytes": 6512
+        },
+        "cfg/se_infty_go.cfg": {
+          "sha256": "d8e584a2e51b24b3fe41e1d9a7a277bb05fad08cbb824b5a25eb81f2975f9089",
+          "bytes": 6517
+        },
+        "cfg/sl_go.cfg": {
+          "sha256": "06faafa7683258e72b1bed750384c7056c0e5b46df96f4dba16523ceed108757",
+          "bytes": 6514
+        },
+        "cfg/se_infty_go_2_rank.cfg": {
+          "sha256": "ee8c10c4d957eb7e03f222e0ad00c7f1583965213a5622ae2b0c818da869f18c",
+          "bytes": 6521
+        },
+        "cfg/se_infty_go_3_rank.cfg": {
+          "sha256": "76bc136efb052ac3115f70816a765b9f99a01ea011dea10623d9562285b17a4e",
+          "bytes": 6521
+        },
+        "scripts/preprocess_games.sh": {
+          "sha256": "38671fe92d7d688cfe254ebc2daed2fd22dcba37d4c4d8b892e9412f30868bc8",
+          "bytes": 1737
+        },
+        "scripts/data.py": {
+          "sha256": "9058a1e83f060f2e7de6625a0f06c7277ca269c1162a21bbcee9c0fa69b65527",
+          "bytes": 8633
+        },
+        "scripts/train.sh": {
+          "sha256": "3ab5838af00c44dd1e49223bbbb546ee3be18cbb5af728865a8c578df4a789fe",
+          "bytes": 3684
+        },
+        "scripts/eval.sh": {
+          "sha256": "47436692dfd3208a0c08acd79f8a1807eb9134d2148ae9e4c3937b7f657cd62e",
+          "bytes": 2772
+        },
+        "scripts/start-container.sh": {
+          "sha256": "508001997f5e2ce836a8da86e653f652d418c5da997a9cb1d6d8f97fe17d99a1",
+          "bytes": 38
+        },
+        "scripts/build.sh": {
+          "sha256": "58cc0696717e8da78eb0fef22c8d8797bcf0ffd6e2aaf4c241d4f449234733da",
+          "bytes": 28
+        },
+        "CMakeLists.txt": {
+          "sha256": "0079b2917fcb968a67c07151438af8333b664acd0be3529e2e7de44fc06b305c",
+          "bytes": 967
+        },
+        "strength/misc/strength_network.h": {
+          "sha256": "9b187d50d07c9d606a870c2b060b7a5be2a9b68b6f1e7d841e1650545b72d5b3",
+          "bytes": 5711
+        },
+        "strength/misc/game_wrapper.cpp": {
+          "sha256": "3eecb7e9863bbf685c099aea73dd3aeed122c0363fd8351f7985cb0d9c76462d",
+          "bytes": 3238
+        },
+        "strength/misc/game_wrapper.h": {
+          "sha256": "22cc402545cf06720c26e8ab1bad7663d5a4e8a7c98fbd53eaebd725ae1de6e9",
+          "bytes": 617
+        },
+        "minizero/minizero/environment/go/go.h": {
+          "sha256": "fdcced2cc4fff972b0f335d74378787ac987a3f6d4ce11ea9d1568a1a13b771c",
+          "bytes": 6641
+        },
+        "minizero/minizero/environment/go/go.cpp": {
+          "sha256": "51bd2eb16d1e2c75766756772e8e6f40b51dec7d8d01a6d098c6b7e0fdacf742",
+          "bytes": 28239
+        }
+      },
+      "checkpoint_download_link_verified": false,
+      "link_review_scope": "downloaded README, configs and training/build/data scripts only; not the whole Internet"
+    },
+    "policy": {
+      "repo": "b08202011/minizero_policydetection",
+      "branch": "policy",
+      "commit": "b44b70f53de6cdaa7e2f44a590d541492148a9ad",
+      "tree_truncated": false,
+      "tree_entries": 157,
+      "release_count": 0,
+      "checkpoint_extension_matches": [],
+      "source_files": {
+        "README.md": {
+          "sha256": "e084f1af810ce79c06760c9b9cab9f10155b09e55d3afd98b579ca8493f5b711",
+          "bytes": 6607
+        },
+        "policy_play.py": {
+          "sha256": "9dd679839939aa110845164dd3cf8e319965a647d9fc6784c3f251fcc852a2ce",
+          "bytes": 6317
+        },
+        "csv_to_sgf.py": {
+          "sha256": "59c7454d691c9cf4f968ecd4ad6afea35bd9de069254af25d593a94589480ccd",
+          "bytes": 715
+        },
+        "csv_to_trainvalsgf.py": {
+          "sha256": "37213421e2c360d5dd0c791fed5ec0bfa57f3658a4129e07e90ca9fd6279baf1",
+          "bytes": 972
+        },
+        "trainpolicy.sh": {
+          "sha256": "62bedcfc4fba85e450bcf5b7eee67d18dcbcffdbebb7f34626f1d2d4a89e08ed",
+          "bytes": 471
+        },
+        "example.cfg": {
+          "sha256": "5ae3ec71ee10fdc34c5f30650b71d160c27f1e83eb8ec00e460ab4692b538c4f",
+          "bytes": 2303
+        },
+        "minizero/network/py/alphazero_network.py": {
+          "sha256": "5bf5afeb4dc8432941b7dc36ada880aa87ce5a5a604fb7389366673f2c7fe475",
+          "bytes": 3922
+        },
+        "minizero/network/py/network_unit.py": {
+          "sha256": "99eff5985a7f22bbc540dd0272a62d0dcf1ee41121dbb1161389c5f467e847bd",
+          "bytes": 3257
+        },
+        "minizero/learner/train.py": {
+          "sha256": "c41d5c7d87b812098ad415eea49f2b6d1ee8b3eb88f3662f59f950337c7ae442",
+          "bytes": 14731
+        },
+        "minizero/learner/train2.py": {
+          "sha256": "d42df1c5804b6dd8bad6fcb0deaab31e43f05851d5511627932928cdb074d0bf",
+          "bytes": 14577
+        },
+        "minizero/learner/pybind.cpp": {
+          "sha256": "6403a19182dc946695021c1ae0e8f7f0fc996b55c18fec8899b7f8b23358c34d",
+          "bytes": 6365
+        },
+        "minizero/learner/data_loader.cpp": {
+          "sha256": "096c09a80f354251b6fc548fdac29c3291bb21a20a4ec8813de9fc9f88ef9273",
+          "bytes": 13613
+        },
+        "minizero/environment/go/go.h": {
+          "sha256": "120471bc3d62722e93d64b192937cc7307b67bffd4ddf3900a33763cfbce7634",
+          "bytes": 6547
+        },
+        "minizero/environment/go/go.cpp": {
+          "sha256": "51bd2eb16d1e2c75766756772e8e6f40b51dec7d8d01a6d098c6b7e0fdacf742",
+          "bytes": 28239
+        },
+        "minizero/utils/sgf_loader.cpp": {
+          "sha256": "91a1d1364187efe9619720c24486c02714a972363670d275e945b6e6946b6d6e",
+          "bytes": 4708
+        },
+        "CMakeLists.txt": {
+          "sha256": "bd9aaad65ecf9f8d5f493a427fd625d339796cb471e1fae196517655ee356e4d",
+          "bytes": 1149
+        },
+        "scripts/start-container.sh": {
+          "sha256": "02f0841b9e12fbd650c0cae42cf9dfc981f412e15cc419ad1e7a2152d3f6180d",
+          "bytes": 1510
+        },
+        "scripts/build.sh": {
+          "sha256": "ab1f7dc4252d5f7347347a5f8fc822832b693fd5488062096d83c49a0c84c8dd",
+          "bytes": 1783
+        },
+        "docs/Training.md": {
+          "sha256": "b3465861dde8db39085fae503721106410eb1c275b21c4fcd5f17a0320d15af8",
+          "bytes": 9542
+        }
+      },
+      "checkpoint_download_link_verified": false,
+      "link_review_scope": "downloaded README, configs and training/build/data scripts only; not the whole Internet"
+    }
+  },
+  "policy_hardcoded_checkpoint": "dan_training_new/model/weight_iter_400000.pkl",
+  "policy_hardcoded_checkpoint_in_tree": false,
+  "weights_downloaded": false,
+  "external_code_executed": false
+}

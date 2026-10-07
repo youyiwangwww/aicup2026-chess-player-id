@@ -1,5 +1,7 @@
 # AI CUP 2026 Go Player Identification
 
+目前完成 **Phase 3.0：Professor Method Strategy Audit**。最新策略見 [phase30_strategy.md](docs/phase30_strategy.md)：Opening是目前最穩定主訊號；下一輪先做Policy smoke test。Phase 2各章保留歷史紀錄，歷史CLOSED TEST不可重跑。Phase 3.0沒有新模型效果結果。
+
 目前進行 **Phase 2.8：Opening-aware / Color-aware DEV2**，設定為 `configs/phase28.yaml`，結果與選定設定見 [docs/phase28_results.md](docs/phase28_results.md) 與 `configs/phase28_selected.yaml`。Round 1 TEST、FINAL TEST 2 已永久 CLOSED；下方舊流程只作歷史參考，請勿重新執行正式 TEST。本輪沒有建立 FINAL TEST 3。
 
 ```powershell
@@ -402,3 +404,11 @@ python scripts/report_phase213.py
 - [PyTorch TripletMarginLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.TripletMarginLoss.html)
 - [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html)
 - [Strength Estimator](https://github.com/rlglab/strength-estimator)：Phase 3 參考，目前未整合。
+## Phase 3 research roadmap
+
+Current strongest：Color-aware Opening。Learned complementary：Triplet；多seed並未證明Mean/Variance穩定解決embedding concentration。
+
+Next：Policy Fingerprint，先完成Phase3.1小型TRAIN-onlypolicy smoke test，再談DEV效果。Later：Strength-aware／multi-rank研究。Policy與Strength預訓練checkpoint目前都未驗證，clone不能視為可直接inference。
+
+Phase3.0只有static audit與CPUutilities，沒有正式training、新split、CLOSED TEST inference或新performance。策略見[phase30_strategy.md](docs/phase30_strategy.md)，來源見[phase30_repo_analysis.md](docs/phase30_repo_analysis.md)，CPU驗證命令：`python scripts/check_phase30.py`。它先執行原160tests（包含暫存syntheticfixtures），再執行Phase3.0utilities tests；不執行新研究實驗。
+

@@ -1,10 +1,20 @@
 # Go Player Identification：教授會議更新
 
+## 目前結論（Phase 2.13 更新；Phase 3.0 僅 static audit）
+
+1. Color-aware Opening 是目前最穩定的主訊號：DEV3 score 0.903435。
+2. Triplet 有部分 complementary signal；固定 A0 Fusion mean 0.909650，但不能把單獨 retrieval 較高等同 fusion 更好。
+3. Embedding concentration 確實存在，16 個 best checkpoints 的 near-zero fraction 均100%、mean direction norm接近1。
+4. Phase 2.12 單seed曾觀察A2/A3改善，但Phase 2.13確認A1/A2/A3均為 **SEED-SENSITIVE RESULT**；不能宣稱Mean/Variance穩定解決collapse。
+5. 下一步先分析教授的Policy／Strength方法；Phase 3.0不training、不建立新TEST、不產生新performance score。
+
+Phase 3.0 audit 已完成：Policy 的18-plane／362-action設計可研究局面條件下的move偏離，但必須用落子前context；legacy TestDataLoader與pass轉換不能原樣沿用。Policy／Strength預訓練權重均未驗證。**主實驗：Phase3.1 Policy Smoke Test**（少量既有TRAIN SGF、14gates）；**次實驗：TRAIN-only Raw-space Anti-Collapse Gradient Feasibility Audit**。單A資料下暫緩Strength，SupCon不立即重訓。完整設計見[Phase3.0策略](phase30_strategy.md)；以下Phase2結果仍保留為歷史紀錄。
+
 ## 研究問題與已知背景
 
 由多盤棋譜辨識未見玩家。既有Triplet在normalize前已共同方向集中，projection後更嚴重；centering／remove-PC／whitening沒有超過原方法。所有既有TEST永久CLOSED，不作這輪選擇。
 
-## Phase 2.12-A／2.12-R
+## Phase 2.12-A／2.12-R（歷史單seed；結論已由Phase 2.13更新）
 
 原150 TRAIN／50 VAL在任何training前因資格不足阻擋。使用者事前明確改成100／50，保留blocked紀錄；不是看結果後改規模。
 
@@ -30,7 +40,7 @@ Best epoch只依normal DEV3 score，color-aware／fusion不參與選擇。
 
 原A0是否仍達collapse警示：True；A1共同方向是否降低：False；A2spread是否增加：True；A3是否normal retrieval最高：True。不能只因effective rank高就判成功。
 
-**PROMISING REPRESENTATION INTERVENTION**。至少一個固定 intervention 在 DEV3 同時提高 retrieval，且四個主要 geometry 指標有至少三項改善。仍只有單 seed／單 DEV3，不能宣稱泛化已確認。 四組 mean direction norm 都仍接近 1，near-zero dimension fraction 都為 100%；A2 cosine separation 雖上升，仍只有約 1e-8，between/within 反而下降。方向性 promising 不等於 collapse 已解決，也不代表統計顯著改善。
+歷史單seed標籤為 **PROMISING REPRESENTATION INTERVENTION**，只代表當時A2的方向性觀察；**不是目前穩定結論**。Phase 2.13已更新為SEED-SENSITIVE RESULT。四組mean direction norm仍接近1、near-zero fraction為100%；不能宣稱collapse已解決。
 
 ## Secondary diagnostics
 
@@ -40,7 +50,7 @@ Opening reference score=0.903435。Color-aware提升的實驗：A1-Triplet-Mean,
 
 單seed／單DEV3、50questions，候選僅DEV3 research candidate，非final model。Geometry與retrieval分開判斷，沒有建立新FINAL TEST。
 
-先確認joint improvement的多seed／新DEV穩定性，再討論SupCon受控比較；目前不需要直接跳過此intervention。
+以上是Phase 2.12當時的研究建議。多seed驗證已在Phase 2.13完成，未支持穩定anti-collapse改善；目前改為先audit教授Policy／Strength方法，再決定後续受控比較。
 
 **143 tests／imports／syntax通過；原blocked records與歷史artifacts保留。** 不加入Strength Estimator／MiniZero／classification head，不建立FINAL TEST4。完整結果見[phase212_results.md](phase212_results.md)。
 
